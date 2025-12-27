@@ -17,16 +17,51 @@ body {
   color: var(--ocean-dark);
 }
 
-.board {
+.board-layout {
+  display: inline-grid;
+  grid-template-columns: 40px auto;
+  grid-template-rows: 40px auto;
+
+  gap: 10px;
+  padding: 20px;
+  background-color: var(--ocean-dark);
+  border-radius: 12px;
+  box-shadow: 0 15px 35px rgba(0, 105, 148, 0.3);
+}
+
+.headers-row {
+  display: grid;
+  grid-template-columns: repeat(10, 50px);
+  gap: 4px;
+  grid-column: 2;
+}
+
+.headers-column {
+  display: grid;
+  grid-template-rows: repeat(10, 50px);
+  gap: 4px;
+  grid-row: 2;
+}
+
+.game-grid {
   display: grid;
   grid-template-columns: repeat(10, 50px);
   grid-template-rows: repeat(10, 50px);
 
   gap: 4px;
-  padding: 10px;
-  background-color: var(--ocean-dark);
-  border-radius: 8px;
-  box-shadow: 0 10px 25px rgba(0, 105, 148, 0.2);
+  grid-column: 2;
+  grid-row: 2;
+  margin-right: 40px;
+  margin-bottom: 40px;
+}
+
+.label-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--white);
+  font-weight: bold;
+  font-size: 0.9rem;
 }
 
 .cell {
@@ -34,6 +69,7 @@ body {
   width: 100%;
   height: 100%;
   cursor: pointer;
+  border-radius: 8px;
   transition: all 0.2s ease;
 }
 
@@ -47,4 +83,56 @@ body {
   border: 2px solid var(--white);
   pointer-events: none; /* Disable clicks */
   transform: scale(0.95);
+}
+
+/* --- Shipyard Container --- */
+.shipyard {
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(255, 255, 255, 0.5);
+  padding: 20px;
+  border-radius: 12px;
+  border: 2px dashed var(--ocean-dark);
+  min-width: 200px;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.shipyard h2 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: var(--ocean-dark);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* --- Individual Ship --- */
+.fleet-ship {
+  display: flex;
+  gap: 2px;
+  padding: 5px;
+  border-radius: 4px;
+  cursor: grab;
+  transition: transform 0.2s ease;
+  background-color: transparent;
+}
+
+.fleet-ship:hover {
+  background-color: rgba(0, 105, 148, 0.1);
+}
+
+.fleet-ship:active {
+  cursor: grabbing;
+}
+
+.fleet-ship.vertical {
+  flex-direction: column;
+}
+
+.ship-part {
+  width: 30px;
+  height: 30px;
+  background-color: var(--ocean-dark);
+  border: 1px solid var(--white);
+  border-radius: 2px;
 }

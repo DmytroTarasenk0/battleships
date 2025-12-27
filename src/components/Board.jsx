@@ -5,6 +5,10 @@ function Board() {
   const cells = Array.from({ length: 100 }, (_, i) => i);
   const [clickedCells, setClickedCells] = useState([]);
 
+  // column and row labels
+  const colLabels = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
+  const rowLabels = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
+
   // change style on click
   const handleClick = (id) => {
     const x = id % 10;
@@ -20,16 +24,36 @@ function Board() {
   };
 
   return (
-    <div className="board">
-      {cells.map((i) => {
-        // class based on state
-        const isClicked = clickedCells.includes(i);
-        const className = isClicked ? "cell cell-clicked" : "cell";
+    <div className="board-layout">
+      <div className="headers-row">
+        {colLabels.map((label) => (
+          <div key={label} className="label-cell">
+            {label}
+          </div>
+        ))}
+      </div>
 
-        return (
-          <div key={i} className={className} onClick={() => handleClick(i)} />
-        );
-      })}
+      <div className="headers-column">
+        {rowLabels.map((label) => (
+          <div key={label} className="label-cell">
+            {label}
+          </div>
+        ))}
+      </div>
+
+      <div className="game-grid">
+        {cells.map((i) => {
+          // class based on state
+          const isClicked = clickedCells.includes(i);
+          return (
+            <div
+              key={i}
+              className={`cell ${isClicked ? "cell-clicked" : ""}`}
+              onClick={() => handleClick(i)}
+            />
+          );
+        })}
+      </div>
     </div>
   );
 }
