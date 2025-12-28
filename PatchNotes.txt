@@ -1,0 +1,5 @@
+28.12.2025
+- added patch notes
+- implemented drag&drop functionality for the Shipyard-Board with boundary and ship-alignment checks
+- moved placedShips state to App to sync Shipyard and Board
+- simplified cell rendering logic to handle hit-placed-clicked-default hierarchy

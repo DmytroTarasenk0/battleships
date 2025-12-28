@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function Shipyard() {
+function Shipyard({ placedShips }) {
   // fleet definition
   const fleet = [
     { id: 0, name: "Carrier", length: 5 },
@@ -23,7 +23,7 @@ function Shipyard() {
 
   // drag start
   const handleDragStart = (e, ship) => {
-    e.dataTransfer.effectAllowed = "move"; // cursor)
+    e.dataTransfer.effectAllowed = "move"; // cursor
     const currentRotation = rotatedShips[ship.id] || false;
 
     // data to be transferred
@@ -46,6 +46,10 @@ function Shipyard() {
       {fleet.map((ship) => {
         // !! ensures getting strict "false" instead of "undefined" if it's new
         const isRotated = !!rotatedShips[ship.id];
+
+        // don't render placed ships
+        const isPlaced = placedShips.some((p) => p.id === ship.id);
+        if (isPlaced) return null;
 
         return (
           <div

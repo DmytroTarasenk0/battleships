@@ -3,13 +3,13 @@ import Board from "./components/Board";
 import Shipyard from "./components/Shipyard";
 
 function App() {
-  const [count, setCount] = useState(0);
+  const [placedShips, setPlacedShips] = useState([]);
 
   return (
     <>
       <h1>Welcome to the Game!</h1>
-      <Board />
-      <Shipyard />
+      <Board placedShips={placedShips} setPlacedShips={setPlacedShips} />
+      <Shipyard placedShips={placedShips} />
     </>
   );
 }
