@@ -6,11 +6,15 @@ function App() {
   const [placedShips, setPlacedShips] = useState([]);
 
   return (
-    <>
+    <div className="app-container">
       <h1>Welcome to the Game!</h1>
-      <Board placedShips={placedShips} setPlacedShips={setPlacedShips} />
-      <Shipyard placedShips={placedShips} />
-    </>
+
+      {/* This DIV is the magic fix for side-by-side layout */}
+      <div className="game-area">
+        <Board placedShips={placedShips} setPlacedShips={setPlacedShips} />
+        <Shipyard placedShips={placedShips} />
+      </div>
+    </div>
   );
 }
 

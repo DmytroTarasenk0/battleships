@@ -59,14 +59,36 @@ function Board({ placedShips, setPlacedShips }) {
         return;
       }
 
-      // collision detection
-      const occupiedCells = placedShips.flatMap((ship) => ship.coords);
-      const collision = newCoords.some((coord) =>
-        occupiedCells.includes(coord)
-      );
+      // forbidden zone(1-field gap + self)
+      const forbidden = new Set();
 
-      if (collision) {
-        console.log("Invalid placement error (collision detected)");
+      placedShips.forEach((ship) => {
+        ship.coords.forEach((coord) => {
+          // add self
+          forbidden.add(coord);
+
+          const cx = coord % 10;
+          const cy = Math.floor(coord / 10);
+
+          // neighboring cells
+          for (let dx = -1; dx <= 1; dx++) {
+            for (let dy = -1; dy <= 1; dy++) {
+              const nx = cx + dx;
+              const ny = cy + dy;
+
+              // out of bounds or add
+              if (nx >= 0 && nx < 10 && ny >= 0 && ny < 10) {
+                forbidden.add(ny * 10 + nx);
+              }
+            }
+          }
+        });
+      });
+
+      const conflict = newCoords.some((coord) => forbidden.has(coord));
+
+      if (conflict) {
+        console.log("Invalid placement error (conflict with existing ships)");
         return;
       }
 
@@ -75,53 +97,64 @@ function Board({ placedShips, setPlacedShips }) {
     }
   };
 
+  // reset button (clear board)
+  const handleReset = () => {
+    setPlacedShips([]);
+    setClickedCells([]);
+  };
+
   return (
-    <div className="board-layout">
-      <div className="headers-row">
-        {colLabels.map((label) => (
-          <div key={label} className="label-cell">
-            {label}
-          </div>
-        ))}
+    <div>
+      <div className="board-layout">
+        <div className="headers-row">
+          {colLabels.map((label) => (
+            <div key={label} className="label-cell">
+              {label}
+            </div>
+          ))}
+        </div>
+
+        <div className="headers-column">
+          {rowLabels.map((label) => (
+            <div key={label} className="label-cell">
+              {label}
+            </div>
+          ))}
+        </div>
+
+        <div className="game-grid">
+          {cells.map((i) => {
+            // class based on state
+            // priority: ship-hitted => ship-present => cell-clicked => default cell
+            const isClicked = clickedCells.includes(i);
+            const isOccupied = placedShips.some((ship) =>
+              ship.coords.includes(i)
+            );
+
+            let statusClass = "";
+
+            if (isOccupied && isClicked) {
+              statusClass = "ship-present ship-hitted";
+            } else if (isOccupied) {
+              statusClass = "ship-present";
+            } else if (isClicked) {
+              statusClass = "cell-clicked";
+            }
+            return (
+              <div
+                key={i}
+                className={`cell ${statusClass}`}
+                onClick={() => handleClick(i)}
+                onDragOver={handleDragOver}
+                onDrop={(e) => handleDrop(e, i)}
+              />
+            );
+          })}
+        </div>
       </div>
-
-      <div className="headers-column">
-        {rowLabels.map((label) => (
-          <div key={label} className="label-cell">
-            {label}
-          </div>
-        ))}
-      </div>
-
-      <div className="game-grid">
-        {cells.map((i) => {
-          // class based on state
-          // priority: ship-hitted => ship-present => cell-clicked => default cell
-          const isClicked = clickedCells.includes(i);
-          const isOccupied = placedShips.some((ship) =>
-            ship.coords.includes(i)
-          );
-
-          let statusClass = "";
-
-          if (isOccupied && isClicked) {
-            statusClass = "ship-present ship-hitted";
-          } else if (isOccupied) {
-            statusClass = "ship-present";
-          } else if (isClicked) {
-            statusClass = "cell-clicked";
-          }
-          return (
-            <div
-              key={i}
-              className={`cell ${statusClass}`}
-              onClick={() => handleClick(i)}
-              onDragOver={handleDragOver}
-              onDrop={(e) => handleDrop(e, i)}
-            />
-          );
-        })}
-      </div>
+      <button className="reset-btn" onClick={handleReset}>
+        Reset Board
+      </button>
     </div>
   );
 }

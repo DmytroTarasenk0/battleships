@@ -3,3 +3,13 @@
 - implemented drag&drop functionality for the Shipyard-Board with boundary and ship-alignment checks
 - moved placedShips state to App to sync Shipyard and Board
 - simplified cell rendering logic to handle hit-placed-clicked-default hierarchy
+
+29.12.2025
+- added Reset-Board button
+- implemented ship-alignment with demand of 1-field in-between
+- re-aligned Shipyard and Board in one row
+
+30.12.2025(plans)
+- implement a game-state(all ships are placed and hit "Start")
+- add logic to hide ships on the board once the game starts
+
