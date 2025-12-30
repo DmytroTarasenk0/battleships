@@ -9,7 +9,13 @@
 - implemented ship-alignment with demand of 1-field in-between
 - re-aligned Shipyard and Board in one row
 
-30.12.2025(plans)
-- implement a game-state(all ships are placed and hit "Start")
-- add logic to hide ships on the board once the game starts
+30.12.2025
+- implemented game-state(all ships are placed and hit "Start Game" button)
+- added "Reset Game" button to return in placement-phase
+- added logic to hide ships on the board once the game starts
+- cells can only be clicked "in-game"
+- moved cell-click in app for future extension of game-ending
+
+31.12.2025(plans)
+- add "random placement" button and use it in future enemy-bot-board
 

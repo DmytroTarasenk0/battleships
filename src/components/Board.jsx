@@ -1,9 +1,15 @@
 import { useState } from "react";
 
-function Board({ placedShips, setPlacedShips }) {
+function Board({
+  placedShips,
+  setPlacedShips,
+  gameState,
+  clickedCells,
+  onCellClick,
+  onResetGame,
+}) {
   // cells and their states
   const cells = Array.from({ length: 100 }, (_, i) => i);
-  const [clickedCells, setClickedCells] = useState([]);
 
   // column and row labels
   const colLabels = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
@@ -26,26 +32,13 @@ function Board({ placedShips, setPlacedShips }) {
     return coords;
   };
 
-  // change style on click
-  const handleClick = (id) => {
-    const x = id % 10;
-    const y = Math.floor(id / 10);
-    console.log(`Cell clicked: (${x}, ${y})`);
-
-    if (!clickedCells.includes(id)) {
-      setClickedCells([...clickedCells, id]);
-    }
-
-    // Unclick
-    // setClickedCells(clickedCells.filter((cellId) => cellId !== id));
-  };
-
   // drop handlers
   const handleDragOver = (e) => {
     e.preventDefault();
   };
 
   const handleDrop = (e, index) => {
+    if (gameState !== "placement") return;
     e.preventDefault();
     const shipData = e.dataTransfer.getData("shipData");
 
@@ -98,9 +91,8 @@ function Board({ placedShips, setPlacedShips }) {
   };
 
   // reset button (clear board)
-  const handleReset = () => {
+  const handleResetBoard = () => {
     setPlacedShips([]);
-    setClickedCells([]);
   };
 
   return (
@@ -135,7 +127,7 @@ function Board({ placedShips, setPlacedShips }) {
 
             if (isOccupied && isClicked) {
               statusClass = "ship-present ship-hitted";
-            } else if (isOccupied) {
+            } else if (isOccupied && gameState === "placement") {
               statusClass = "ship-present";
             } else if (isClicked) {
               statusClass = "cell-clicked";
@@ -144,7 +136,7 @@ function Board({ placedShips, setPlacedShips }) {
               <div
                 key={i}
                 className={`cell ${statusClass}`}
-                onClick={() => handleClick(i)}
+                onClick={() => onCellClick(i)}
                 onDragOver={handleDragOver}
                 onDrop={(e) => handleDrop(e, i)}
               />
@@ -152,9 +144,15 @@ function Board({ placedShips, setPlacedShips }) {
           })}
         </div>
       </div>
-      <button className="reset-btn" onClick={handleReset}>
-        Reset Board
-      </button>
+      {gameState === "placement" ? (
+        <button className="reset-btn" onClick={handleResetBoard}>
+          Reset Board
+        </button>
+      ) : (
+        <button className="reset-btn" onClick={onResetGame}>
+          Reset Game
+        </button>
+      )}
     </div>
   );
 }
