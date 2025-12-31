@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { calculateCoords, checkCollision } from "../helpers";
 
 function Board({
   placedShips,
@@ -7,6 +7,7 @@ function Board({
   clickedCells,
   onCellClick,
   onResetGame,
+  onRandomize,
 }) {
   // cells and their states
   const cells = Array.from({ length: 100 }, (_, i) => i);
@@ -15,22 +16,7 @@ function Board({
   const colLabels = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
   const rowLabels = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
 
-  // calculate coordinates
-  const calculateCoords = (startIndex, length, isRotated) => {
-    const coords = [];
-    const startX = startIndex % 10;
-    const startY = Math.floor(startIndex / 10);
-
-    for (let i = 0; i < length; i++) {
-      const x = isRotated ? startX : startX + i;
-      const y = isRotated ? startY + i : startY;
-
-      if (x > 9 || y > 9) return null; // out of bounds
-
-      coords.push(y * 10 + x);
-    }
-    return coords;
-  };
+  // calculate coordinates moved to helpers.js
 
   // drop handlers
   const handleDragOver = (e) => {
@@ -52,35 +38,8 @@ function Board({
         return;
       }
 
-      // forbidden zone(1-field gap + self)
-      const forbidden = new Set();
-
-      placedShips.forEach((ship) => {
-        ship.coords.forEach((coord) => {
-          // add self
-          forbidden.add(coord);
-
-          const cx = coord % 10;
-          const cy = Math.floor(coord / 10);
-
-          // neighboring cells
-          for (let dx = -1; dx <= 1; dx++) {
-            for (let dy = -1; dy <= 1; dy++) {
-              const nx = cx + dx;
-              const ny = cy + dy;
-
-              // out of bounds or add
-              if (nx >= 0 && nx < 10 && ny >= 0 && ny < 10) {
-                forbidden.add(ny * 10 + nx);
-              }
-            }
-          }
-        });
-      });
-
-      const conflict = newCoords.some((coord) => forbidden.has(coord));
-
-      if (conflict) {
+      // check collision remade with helper
+      if (checkCollision(placedShips, newCoords)) {
         console.log("Invalid placement error (conflict with existing ships)");
         return;
       }
@@ -145,9 +104,14 @@ function Board({
         </div>
       </div>
       {gameState === "placement" ? (
-        <button className="reset-btn" onClick={handleResetBoard}>
-          Reset Board
-        </button>
+        <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+          <button className="reset-btn" onClick={handleResetBoard}>
+            Reset Board
+          </button>
+          <button className="random-btn" onClick={onRandomize}>
+            Randomize Ships
+          </button>
+        </div>
       ) : (
         <button className="reset-btn" onClick={onResetGame}>
           Reset Game

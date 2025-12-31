@@ -1,6 +1,8 @@
 import { useState } from "react";
 import Board from "./components/Board";
 import Shipyard from "./components/Shipyard";
+import { fleet } from "./fleet";
+import { calculateCoords, checkCollision } from "./helpers";
 
 function App() {
   const [placedShips, setPlacedShips] = useState([]);
@@ -26,6 +28,31 @@ function App() {
     }
   };
 
+  // randomly place ships on the board in 100 attempts max each
+  const randomShipPlacement = () => {
+    const newPlacedShips = [];
+
+    for (const ship of fleet) {
+      let placed = false;
+      let attempts = 0;
+
+      while (!placed && attempts < 100) {
+        const randIndex = Math.floor(Math.random() * 100);
+        const randRotated = Math.random() < 0.5;
+
+        const coords = calculateCoords(randIndex, ship.length, randRotated);
+
+        // if coords exist and no collision => place ship
+        if (coords && !checkCollision(newPlacedShips, coords)) {
+          newPlacedShips.push({ id: ship.id, coords });
+          placed = true;
+        }
+        attempts++;
+      }
+    }
+    setPlacedShips(newPlacedShips);
+  };
+
   return (
     <div className="app-container">
       <h1>Welcome to the Game!</h1>
@@ -39,6 +66,7 @@ function App() {
           clickedCells={clickedCells}
           onCellClick={handleCellClick}
           onResetGame={resetGame}
+          onRandomize={randomShipPlacement}
         />
         {gameState === "placement" ? (
           <Shipyard placedShips={placedShips} />

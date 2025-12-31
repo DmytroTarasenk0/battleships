@@ -16,6 +16,12 @@
 - cells can only be clicked "in-game"
 - moved cell-click in app for future extension of game-ending
 
-31.12.2025(plans)
-- add "random placement" button and use it in future enemy-bot-board
+31.12.2025
+- added randomShipPlacement function for player-button and future enemy-bot-board 
+- added "Randomize Ships" button to the placement-controls
+- moved fleet-data to /src/fleet.js 
+- moved calculateCoords and checkCollision helper-functions to src/helpers.js
+
+01.01.2026(plans)
+- enemy board render
 

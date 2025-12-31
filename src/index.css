@@ -171,7 +171,6 @@ body {
   font-weight: bold;
   display: flex;
   justify-content: center;
-  width: 100%;
   transition: background-color 0.3s ease;
 }
 
@@ -183,7 +182,7 @@ body {
 .start-btn {
   margin-top: 20px;
   padding: 15px 40px;
-  background-color: #067735;
+  background-color: #2ecc71;
   color: white;
   border: none;
   border-radius: 8px;
@@ -194,5 +193,24 @@ body {
 }
 
 .start-btn:hover {
-  background-color: #2ecc71;
+  background-color: #067735;
+}
+
+/* Randomize Button */
+.random-btn {
+  margin-top: 15px;
+  padding: 12px 48px;
+  background-color: #b339e4;
+  color: var(--white);
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+}
+
+.random-btn:hover {
+  background-color: #7c1aa3;
 }
