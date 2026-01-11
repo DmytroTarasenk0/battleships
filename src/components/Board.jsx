@@ -6,8 +6,8 @@ function Board({
   gameState,
   clickedCells,
   onCellClick,
-  onResetGame,
   onRandomize,
+  isEnemy, // true or false
 }) {
   // cells and their states
   const cells = Array.from({ length: 100 }, (_, i) => i);
@@ -24,7 +24,7 @@ function Board({
   };
 
   const handleDrop = (e, index) => {
-    if (gameState !== "placement") return;
+    if (gameState !== "placement" || isEnemy) return; // no enemy placement just in case
     e.preventDefault();
     const shipData = e.dataTransfer.getData("shipData");
 
@@ -33,16 +33,11 @@ function Board({
 
       const newCoords = calculateCoords(index, length, rotated);
 
-      if (!newCoords) {
-        console.log("Invalid placement error (out of bounds)");
-        return;
-      }
+      // out of bounds check
+      if (!newCoords) return;
 
-      // check collision remade with helper
-      if (checkCollision(placedShips, newCoords)) {
-        console.log("Invalid placement error (conflict with existing ships)");
-        return;
-      }
+      // check collision with existing ships remade with helper
+      if (checkCollision(placedShips, newCoords)) return;
 
       // update placed ships
       setPlacedShips((prev) => [...prev, { id, coords: newCoords }]);
@@ -84,9 +79,11 @@ function Board({
 
             let statusClass = "";
 
+            // hierarchy of ship-visibility
+            // clicked & occupied => occupied by player => clicked => default
             if (isOccupied && isClicked) {
               statusClass = "ship-present ship-hitted";
-            } else if (isOccupied && gameState === "placement") {
+            } else if (isOccupied && !isEnemy) {
               statusClass = "ship-present";
             } else if (isClicked) {
               statusClass = "cell-clicked";
@@ -103,7 +100,7 @@ function Board({
           })}
         </div>
       </div>
-      {gameState === "placement" ? (
+      {!isEnemy && gameState === "placement" ? (
         <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
           <button className="reset-btn" onClick={handleResetBoard}>
             Reset Board
@@ -112,11 +109,7 @@ function Board({
             Randomize Ships
           </button>
         </div>
-      ) : (
-        <button className="reset-btn" onClick={onResetGame}>
-          Reset Game
-        </button>
-      )}
+      ) : null}
     </div>
   );
 }

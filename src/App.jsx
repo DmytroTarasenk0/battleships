@@ -2,54 +2,50 @@ import { useState } from "react";
 import Board from "./components/Board";
 import Shipyard from "./components/Shipyard";
 import { fleet } from "./fleet";
-import { calculateCoords, checkCollision } from "./helpers";
+import { calculateCoords, checkCollision, generateShips } from "./helpers";
 
 function App() {
+  // player states
   const [placedShips, setPlacedShips] = useState([]);
-  const [gameState, setGameState] = useState("placement"); // "placement" or "play"
   const [clickedCells, setClickedCells] = useState([]);
+
+  // bot states
+  const [botShips, setBotShips] = useState([]);
+  const [botClickedCells, setBotClickedCells] = useState([]);
+
+  const [gameState, setGameState] = useState("placement"); // "placement" or "play"
 
   const resetGame = () => {
     setPlacedShips([]);
     setClickedCells([]);
+
+    setBotShips([]);
+    setBotClickedCells([]);
+
     setGameState("placement");
   };
 
-  // click only "in-game" and no double-click
-  const handleCellClick = (cellIndex) => {
+  // click enemy-board (player attacking bot)
+  const handleEnemyClick = (cellIndex) => {
     if (gameState !== "play") return;
-    if (!clickedCells.includes(cellIndex))
-      return setClickedCells((prev) => [...prev, cellIndex]);
+
+    if (!botClickedCells.includes(cellIndex))
+      return setBotClickedCells((prev) => [...prev, cellIndex]);
   };
 
+  // start button handler (generate bot ships and switch state)
   const startHandler = () => {
     if (placedShips.length == 6) {
+      const enemies = generateShips();
+      setBotShips(enemies);
+
       setGameState("play");
     }
   };
 
-  // randomly place ships on the board in 100 attempts max each
-  const randomShipPlacement = () => {
-    const newPlacedShips = [];
-
-    for (const ship of fleet) {
-      let placed = false;
-      let attempts = 0;
-
-      while (!placed && attempts < 100) {
-        const randIndex = Math.floor(Math.random() * 100);
-        const randRotated = Math.random() < 0.5;
-
-        const coords = calculateCoords(randIndex, ship.length, randRotated);
-
-        // if coords exist and no collision => place ship
-        if (coords && !checkCollision(newPlacedShips, coords)) {
-          newPlacedShips.push({ id: ship.id, coords });
-          placed = true;
-        }
-        attempts++;
-      }
-    }
+  // random-button handler
+  const handleRandomize = () => {
+    const newPlacedShips = generateShips();
     setPlacedShips(newPlacedShips);
   };
 
@@ -59,19 +55,38 @@ function App() {
       <h1>Phase: {gameState}</h1>
 
       <div className="game-area">
-        <Board
-          placedShips={placedShips}
-          setPlacedShips={setPlacedShips}
-          gameState={gameState}
-          clickedCells={clickedCells}
-          onCellClick={handleCellClick}
-          onResetGame={resetGame}
-          onRandomize={randomShipPlacement}
-        />
-        {gameState === "placement" ? (
-          <Shipyard placedShips={placedShips} />
-        ) : null}
-        {/* TODO change to enemy-board */}
+        <div className="player-section">
+          <h2>Your Board</h2>
+          <Board
+            placedShips={placedShips}
+            setPlacedShips={setPlacedShips}
+            gameState={gameState}
+            clickedCells={clickedCells}
+            onCellClick={() => {}} // no self-clicking
+            onRandomize={handleRandomize}
+            isEnemy={false} // player board
+          />
+        </div>
+
+        <div className="enemy-section">
+          {gameState === "placement" ? (
+            <Shipyard placedShips={placedShips} />
+          ) : (
+            <>
+              <h2>Enemy Board</h2>
+              <Board
+                placedShips={botShips}
+                gameState={gameState}
+                clickedCells={botClickedCells}
+                onCellClick={handleEnemyClick}
+                isEnemy={true} // enemy board
+              />
+              <button className="reset-btn" onClick={resetGame}>
+                Reset Game
+              </button>
+            </>
+          )}
+        </div>
       </div>
 
       {gameState === "placement" && (

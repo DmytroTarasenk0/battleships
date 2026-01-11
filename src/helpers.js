@@ -1,3 +1,5 @@
+import { fleet } from "./fleet";
+
 // calculate the coordinates for a ship
 export const calculateCoords = (startIndex, length, isRotated) => {
   const coords = [];
@@ -43,4 +45,29 @@ export const checkCollision = (placedShips, newCoords) => {
   });
 
   return newCoords.some((coord) => forbidden.has(coord));
+};
+
+// ship-placement random generator (randomly place ships on the board in 100 attempts max each)
+export const generateShips = () => {
+  const newShips = [];
+  for (const ship of fleet) {
+    let placed = false;
+    let attempts = 0;
+
+    while (!placed && attempts < 100) {
+      const randIndex = Math.floor(Math.random() * 100);
+      const randRotated = Math.random() < 0.5;
+
+      const coords = calculateCoords(randIndex, ship.length, randRotated);
+
+      // if coords exist and no collision => place ship
+      if (coords && !checkCollision(newShips, coords)) {
+        newShips.push({ id: ship.id, coords });
+        placed = true;
+      }
+      attempts++;
+    }
+  }
+
+  return newShips;
 };

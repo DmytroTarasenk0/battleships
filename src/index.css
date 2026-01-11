@@ -3,7 +3,7 @@
   --ocean-dark: #006994;
   --ocean-medium: #4ca3dd;
   --ocean-light: #e0f0f5;
-  --white: #ffffff;
+  --cell-size: 40px;
 }
 
 body {
@@ -23,22 +23,32 @@ body {
   flex-direction: column;
   align-items: center;
   min-height: 100vh;
+  justify-content: center;
+  padding: 10px;
 }
 
 .game-area {
   display: flex;
-  gap: 50px;
+  gap: 30px;
   align-items: flex-start;
-  margin-top: 20px;
+  margin-top: 10px;
+}
+
+/* --- Boards --- */
+.player-section,
+.enemy-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .board-layout {
   display: inline-grid;
-  grid-template-columns: 40px auto;
-  grid-template-rows: 40px auto;
+  grid-template-columns: 30px auto;
+  grid-template-rows: 30px auto;
 
-  gap: 10px;
-  padding: 20px;
+  gap: 5px;
+  padding: 15px;
   background-color: var(--ocean-dark);
   border-radius: 12px;
   box-shadow: 0 15px 35px rgba(0, 105, 148, 0.3);
@@ -46,37 +56,35 @@ body {
 
 .headers-row {
   display: grid;
-  grid-template-columns: repeat(10, 50px);
+  grid-template-columns: repeat(10, var(--cell-size));
   gap: 4px;
   grid-column: 2;
 }
 
 .headers-column {
   display: grid;
-  grid-template-rows: repeat(10, 50px);
+  grid-template-rows: repeat(10, var(--cell-size));
   gap: 4px;
   grid-row: 2;
 }
 
 .game-grid {
   display: grid;
-  grid-template-columns: repeat(10, 50px);
-  grid-template-rows: repeat(10, 50px);
+  grid-template-columns: repeat(10, var(--cell-size));
+  grid-template-rows: repeat(10, var(--cell-size));
 
   gap: 4px;
-  grid-column: 2;
-  grid-row: 2;
-  margin-right: 40px;
-  margin-bottom: 40px;
+  margin-right: 20px;
+  margin-bottom: 20px;
 }
 
 .label-cell {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--white);
+  color: white;
   font-weight: bold;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
 }
 
 .cell {
@@ -95,7 +103,7 @@ body {
 
 .cell-clicked {
   background-color: var(--ocean-dark);
-  border: 2px solid var(--white);
+  border: 2px solid white;
   pointer-events: none; /* Disable clicks */
   transform: scale(0.95);
 }
@@ -146,17 +154,17 @@ body {
 
 .ship-present,
 .ship-part {
-  width: 50px;
-  height: 50px;
+  width: var(--cell-size);
+  height: var(--cell-size);
   background-color: #34495e;
-  border: 1px solid var(--white);
-  border-radius: 25px;
+  border: 1px solid white;
+  border-radius: calc(var(--cell-size) / 2);
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
 }
 
 .ship-hitted {
   background-color: #e74c3c;
-  border: 2px solid var(--white);
+  border: 2px solid white;
 }
 
 /* Reset Button */
@@ -164,7 +172,7 @@ body {
   margin-top: 15px;
   padding: 12px 48px;
   background-color: #e74c3c;
-  color: var(--white);
+  color: white;
   border: none;
   border-radius: 20px;
   cursor: pointer;
@@ -201,7 +209,7 @@ body {
   margin-top: 15px;
   padding: 12px 48px;
   background-color: #b339e4;
-  color: var(--white);
+  color: white;
   border: none;
   border-radius: 20px;
   cursor: pointer;

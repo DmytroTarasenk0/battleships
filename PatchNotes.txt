@@ -22,6 +22,12 @@
 - moved fleet-data to /src/fleet.js 
 - moved calculateCoords and checkCollision helper-functions to src/helpers.js
 
-01.01.2026(plans)
-- enemy board render
+11.01.2026
+- implemented enemy board render after game start
+- created random placement generator in helpers
+- implemented "fog of war" by showing player ships in-game
+- moved Reset Game button from Board to App component
+- reduced cell-size and UI overall to fit game in a single screen-height
 
+plans
+- player-bot turn logic
