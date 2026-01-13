@@ -71,3 +71,38 @@ export const generateShips = () => {
 
   return newShips;
 };
+
+// check if cell is occupied by any ship in the fleet
+export const isOccupied = (fleetOwner, cellIndex) =>
+  fleetOwner.some((ship) => ship.coords.includes(cellIndex));
+
+// reveal collision-aura(1-cell border) after kill
+export const revealAura = (shipCoords) => {
+  const aura = new Set();
+
+  shipCoords.forEach((index) => {
+    const cx = index % 10;
+    const cy = Math.floor(index / 10);
+
+    // neighboring cells
+    for (let dx = -1; dx <= 1; dx++) {
+      for (let dy = -1; dy <= 1; dy++) {
+        if (dx === 0 && dy === 0) continue; // skip self
+
+        const nx = cx + dx;
+        const ny = cy + dy;
+
+        // out of bounds or add
+        if (nx >= 0 && nx < 10 && ny >= 0 && ny < 10) {
+          aura.add(ny * 10 + nx);
+        }
+      }
+    }
+  });
+
+  shipCoords.forEach((coord) => {
+    aura.delete(coord); // remove ship coords from aura
+  });
+
+  return Array.from(aura);
+};

@@ -1,8 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect, use } from "react";
 import Board from "./components/Board";
 import Shipyard from "./components/Shipyard";
 import { fleet } from "./fleet";
-import { calculateCoords, checkCollision, generateShips } from "./helpers";
+import {
+  calculateCoords,
+  checkCollision,
+  generateShips,
+  isOccupied,
+  revealAura,
+} from "./helpers";
 
 function App() {
   // player states
@@ -13,7 +19,47 @@ function App() {
   const [botShips, setBotShips] = useState([]);
   const [botClickedCells, setBotClickedCells] = useState([]);
 
+  // game states
   const [gameState, setGameState] = useState("placement"); // "placement" or "play"
+  const [turn, setTurn] = useState(() => Math.round(Math.random())); // 1 - player, 0 - bot, first turn random
+
+  // bot automatic turn
+  useEffect(() => {
+    if (gameState === "play" && turn === 0) {
+      const shoot = setTimeout(() => {
+        // find target cell
+        let target;
+        do {
+          target = Math.floor(Math.random() * 100);
+        } while (clickedCells.includes(target));
+
+        // Temporary array for logging clicks and check "sunk ship aura"
+        const newClicks = [...clickedCells, target];
+        const sunkPlayerAura = [];
+
+        placedShips.forEach((ship) => {
+          const isSunk = ship.coords.every((coord) =>
+            newClicks.includes(coord)
+          );
+
+          // push aura coords if sunk
+          if (isSunk) {
+            const aura = revealAura(ship.coords);
+            sunkPlayerAura.push(...aura);
+          }
+        });
+
+        const allClicks = new Set([...newClicks, ...sunkPlayerAura]);
+
+        setClickedCells(Array.from(allClicks));
+
+        // check hit
+        if (!isOccupied(placedShips, target)) setTurn(1); // switch to player turn if miss
+      }, 1000);
+
+      return () => clearTimeout(shoot);
+    }
+  }, [turn, gameState, clickedCells]);
 
   const resetGame = () => {
     setPlacedShips([]);
@@ -23,14 +69,36 @@ function App() {
     setBotClickedCells([]);
 
     setGameState("placement");
+    setTurn(Math.round(Math.random()));
   };
 
   // click enemy-board (player attacking bot)
   const handleEnemyClick = (cellIndex) => {
     if (gameState !== "play") return;
+    if (turn !== 1) return;
 
-    if (!botClickedCells.includes(cellIndex))
-      return setBotClickedCells((prev) => [...prev, cellIndex]);
+    if (!botClickedCells.includes(cellIndex)) {
+      // Temporary array for logging clicks and check "sunk ship aura"
+      const newClicks = [...botClickedCells, cellIndex];
+      const sunkBotAura = [];
+
+      botShips.forEach((ship) => {
+        const isSunk = ship.coords.every((coord) => newClicks.includes(coord));
+
+        // push aura coords if sunk
+        if (isSunk) {
+          const aura = revealAura(ship.coords);
+          sunkBotAura.push(...aura);
+        }
+      });
+
+      const allClicks = new Set([...newClicks, ...sunkBotAura]);
+
+      setBotClickedCells(Array.from(allClicks));
+      if (!isOccupied(botShips, cellIndex)) {
+        setTurn(0); // switch to bot turn if miss
+      }
+    }
   };
 
   // start button handler (generate bot ships and switch state)
@@ -51,7 +119,7 @@ function App() {
 
   return (
     <div className="app-container">
-      <h1>Welcome to the Game!</h1>
+      <h1>Current Turn: {turn === 1 ? "Player" : "Bot"}</h1>
       <h1>Phase: {gameState}</h1>
 
       <div className="game-area">

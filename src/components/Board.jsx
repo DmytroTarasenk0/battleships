@@ -1,4 +1,4 @@
-import { calculateCoords, checkCollision } from "../helpers";
+import { calculateCoords, checkCollision, isOccupied } from "../helpers";
 
 function Board({
   placedShips,
@@ -73,17 +73,15 @@ function Board({
             // class based on state
             // priority: ship-hitted => ship-present => cell-clicked => default cell
             const isClicked = clickedCells.includes(i);
-            const isOccupied = placedShips.some((ship) =>
-              ship.coords.includes(i)
-            );
+            const Occupied = isOccupied(placedShips, i);
 
             let statusClass = "";
 
             // hierarchy of ship-visibility
             // clicked & occupied => occupied by player => clicked => default
-            if (isOccupied && isClicked) {
+            if (Occupied && isClicked) {
               statusClass = "ship-present ship-hitted";
-            } else if (isOccupied && !isEnemy) {
+            } else if (Occupied && !isEnemy) {
               statusClass = "ship-present";
             } else if (isClicked) {
               statusClass = "cell-clicked";

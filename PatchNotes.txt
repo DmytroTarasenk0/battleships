@@ -29,5 +29,13 @@
 - moved Reset Game button from Board to App component
 - reduced cell-size and UI overall to fit game in a single screen-height
 
+13.01.2026
+- implemented turn-based game loop
+- turn continues if the current player hits a ship
+- turn passes to the opponent on a miss
+- moved isOccupied logic to src/helpers.js
+
+
 plans
-- player-bot turn logic
+- make bot "smarter"
+- add game-over state and screen
