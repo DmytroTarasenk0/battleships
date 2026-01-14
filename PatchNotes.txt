@@ -35,7 +35,11 @@
 - turn passes to the opponent on a miss
 - moved isOccupied logic to src/helpers.js
 
+14.01.2026
+- implemented memory for bot
+- now bot targets neighbour cells based if hit the ship. In addition can calculate Axis for more scoped shooting
+- added Game Over modal screen with "Play Again" button 
 
 plans
-- make bot "smarter"
-- add game-over state and screen
+- learn about web-deploy
+- polish details

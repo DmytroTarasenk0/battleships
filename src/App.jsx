@@ -1,14 +1,8 @@
 import { useState, useEffect, use } from "react";
 import Board from "./components/Board";
 import Shipyard from "./components/Shipyard";
-import { fleet } from "./fleet";
-import {
-  calculateCoords,
-  checkCollision,
-  generateShips,
-  isOccupied,
-  revealAura,
-} from "./helpers";
+import GameOver from "./components/GameOver";
+import { generateShips, isOccupied, revealAura, getNeighbors } from "./helpers";
 
 function App() {
   // player states
@@ -19,9 +13,13 @@ function App() {
   const [botShips, setBotShips] = useState([]);
   const [botClickedCells, setBotClickedCells] = useState([]);
 
+  const [Queue, setQueue] = useState([]); // track neighbours of hits
+  const [lastHit, setLastHit] = useState(null); // track last hit position
+
   // game states
-  const [gameState, setGameState] = useState("placement"); // "placement" or "play"
+  const [gameState, setGameState] = useState("placement"); // "placement" or "play" or "gameover"
   const [turn, setTurn] = useState(() => Math.round(Math.random())); // 1 - player, 0 - bot, first turn random
+  const [winner, setWinner] = useState(null); // "player" or "bot"
 
   // bot automatic turn
   useEffect(() => {
@@ -29,13 +27,25 @@ function App() {
       const shoot = setTimeout(() => {
         // find target cell
         let target;
-        do {
-          target = Math.floor(Math.random() * 100);
-        } while (clickedCells.includes(target));
+
+        // if have queued NOT-clicked neighbors, pick from them
+        const validQueue = Queue.filter((i) => !clickedCells.includes(i));
+
+        if (validQueue.length > 0) {
+          // logical shoot
+          target = validQueue[Math.floor(Math.random() * validQueue.length)];
+        } else {
+          // random shoot
+          do {
+            target = Math.floor(Math.random() * 100);
+          } while (clickedCells.includes(target));
+          setLastHit(null); // reset last hit if shooting random
+        }
 
         // Temporary array for logging clicks and check "sunk ship aura"
         const newClicks = [...clickedCells, target];
-        const sunkPlayerAura = [];
+        const sunkPlayerAura = []; // all ships' aura to add
+        let shipSunk = false; // current ship sunk status
 
         placedShips.forEach((ship) => {
           const isSunk = ship.coords.every((coord) =>
@@ -46,6 +56,11 @@ function App() {
           if (isSunk) {
             const aura = revealAura(ship.coords);
             sunkPlayerAura.push(...aura);
+
+            // sunk current ship if it contains target
+            if (ship.coords.includes(target)) {
+              shipSunk = true;
+            }
           }
         });
 
@@ -53,13 +68,62 @@ function App() {
 
         setClickedCells(Array.from(allClicks));
 
-        // check hit
-        if (!isOccupied(placedShips, target)) setTurn(1); // switch to player turn if miss
+        const isGameOver = checkGameOver(
+          placedShips,
+          Array.from(allClicks),
+          "bot"
+        );
+        if (isGameOver) return;
+
+        // next hit
+        const hit = isOccupied(placedShips, target);
+        if (hit) {
+          let nextTargets = validQueue.filter((t) => t !== target); // remove current target from queue
+          const neighbors = getNeighbors(target).filter(
+            (n) => !clickedCells.includes(n)
+          ); // get unclicked neighbors
+
+          if (shipSunk) {
+            // clear queue if ship sunk and go random
+            setQueue([]);
+            setLastHit(null);
+          } else if (lastHit !== null) {
+            // determine Axis if 2 hits in a row (vertical/horizontal)
+
+            // vertical if |difference| % 10 === 0
+            // horizontal otherwise
+            const diff = Math.abs(target - lastHit);
+            const isVertical = diff % 10 === 0;
+
+            // filter neighbors based on axis
+            if (isVertical) {
+              const col = target % 10;
+              nextTargets = [...nextTargets, ...neighbors].filter(
+                (t) => t % 10 === col
+              );
+            } else {
+              const row = Math.floor(target / 10);
+              nextTargets = [...nextTargets, ...neighbors].filter(
+                (t) => Math.floor(t / 10) === row
+              );
+            }
+
+            setQueue(nextTargets);
+            setLastHit(target);
+          } else {
+            setQueue([...nextTargets, ...neighbors]); // add all neighbors to queue
+            setLastHit(target);
+          }
+        } else {
+          // miss
+          setQueue(validQueue.filter((i) => i !== target)); // remove target from queue because clicked
+          setTurn(1); // switch to player turn
+        }
       }, 1000);
 
       return () => clearTimeout(shoot);
     }
-  }, [turn, gameState, clickedCells]);
+  }, [turn, gameState, clickedCells, Queue, lastHit]);
 
   const resetGame = () => {
     setPlacedShips([]);
@@ -67,9 +131,26 @@ function App() {
 
     setBotShips([]);
     setBotClickedCells([]);
+    setQueue([]);
+    setLastHit(null);
 
     setGameState("placement");
     setTurn(Math.round(Math.random()));
+    setWinner(null);
+  };
+
+  // check if all ships are sunk => game over and set winner
+  const checkGameOver = (enemyShips, hits, fleetOwner) => {
+    const isAllSunk = enemyShips.every((ship) =>
+      ship.coords.every((coord) => hits.includes(coord))
+    );
+
+    if (isAllSunk) {
+      setWinner(fleetOwner);
+      setGameState("gameOver");
+      return true;
+    }
+    return false;
   };
 
   // click enemy-board (player attacking bot)
@@ -95,6 +176,9 @@ function App() {
       const allClicks = new Set([...newClicks, ...sunkBotAura]);
 
       setBotClickedCells(Array.from(allClicks));
+
+      checkGameOver(botShips, Array.from(allClicks), "player");
+
       if (!isOccupied(botShips, cellIndex)) {
         setTurn(0); // switch to bot turn if miss
       }
@@ -168,6 +252,10 @@ function App() {
         >
           Start Game
         </button>
+      )}
+
+      {gameState === "gameOver" && (
+        <GameOver winner={winner} onReset={resetGame} />
       )}
     </div>
   );

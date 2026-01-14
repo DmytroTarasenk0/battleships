@@ -34,7 +34,7 @@ body {
   margin-top: 10px;
 }
 
-/* --- Boards --- */
+/* Boards */
 .player-section,
 .enemy-section {
   display: flex;
@@ -108,7 +108,7 @@ body {
   transform: scale(0.95);
 }
 
-/* --- Shipyard Container --- */
+/* Shipyard Container */
 .shipyard {
   display: flex;
   flex-direction: column;
@@ -129,7 +129,7 @@ body {
   letter-spacing: 1px;
 }
 
-/* --- Individual Ship --- */
+/* Individual Ship */
 .fleet-ship {
   display: flex;
   gap: 2px;
@@ -221,4 +221,48 @@ body {
 
 .random-btn:hover {
   background-color: #7c1aa3;
+}
+
+/* Game Over Overlay */
+.game-over-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.game-over-modal {
+  background-color: white;
+  padding: 40px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  border: 4px solid var(--ocean-dark);
+}
+
+.game-over-modal h2 {
+  font-size: 2.5rem;
+  margin-top: 0;
+  color: var(--ocean-dark);
+}
+
+.new-game-btn {
+  margin: 20px auto 0 auto;
+  padding: 12px 48px;
+  background-color: #42db34;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  transition: background-color 0.3s ease;
 }

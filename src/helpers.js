@@ -106,3 +106,17 @@ export const revealAura = (shipCoords) => {
 
   return Array.from(aura);
 };
+
+// get neighboring cells of a given cell
+export const getNeighbors = (index) => {
+  const neighbors = [];
+  const x = index % 10;
+  const y = Math.floor(index / 10);
+
+  if (y > 0) neighbors.push(index - 10); // up
+  if (y < 9) neighbors.push(index + 10); // down
+  if (x > 0) neighbors.push(index - 1); // left
+  if (x < 9) neighbors.push(index + 1); // right
+
+  return neighbors;
+};
