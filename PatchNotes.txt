@@ -40,6 +40,15 @@
 - now bot targets neighbour cells based if hit the ship. In addition can calculate Axis for more scoped shooting
 - added Game Over modal screen with "Play Again" button 
 
+15.01.2026
+- added favicon in public/ directory
+- rewrote README.md
+- updated UI to hide development benchmarks
+- reached stable v1.0 (local version)
+
+
 plans
 - learn about web-deploy
-- polish details
+- learn about implementation of multiplayer
+- implement touch-screen support (maybe)
+- implement sound-effects (maybe)

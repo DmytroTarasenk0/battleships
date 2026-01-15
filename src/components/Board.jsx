@@ -16,8 +16,6 @@ function Board({
   const colLabels = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
   const rowLabels = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
 
-  // calculate coordinates moved to helpers.js
-
   // drop handlers
   const handleDragOver = (e) => {
     e.preventDefault();

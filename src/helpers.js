@@ -29,7 +29,7 @@ export const checkCollision = (placedShips, newCoords) => {
       const cx = coord % 10;
       const cy = Math.floor(coord / 10);
 
-      // neighboring cells
+      // neighbouring cells
       for (let dx = -1; dx <= 1; dx++) {
         for (let dy = -1; dy <= 1; dy++) {
           const nx = cx + dx;
@@ -84,7 +84,7 @@ export const revealAura = (shipCoords) => {
     const cx = index % 10;
     const cy = Math.floor(index / 10);
 
-    // neighboring cells
+    // neighbouring cells
     for (let dx = -1; dx <= 1; dx++) {
       for (let dy = -1; dy <= 1; dy++) {
         if (dx === 0 && dy === 0) continue; // skip self
@@ -107,16 +107,16 @@ export const revealAura = (shipCoords) => {
   return Array.from(aura);
 };
 
-// get neighboring cells of a given cell
-export const getNeighbors = (index) => {
-  const neighbors = [];
+// get neighbouring cells of a given cell
+export const getNeighbours = (index) => {
+  const neighbours = [];
   const x = index % 10;
   const y = Math.floor(index / 10);
 
-  if (y > 0) neighbors.push(index - 10); // up
-  if (y < 9) neighbors.push(index + 10); // down
-  if (x > 0) neighbors.push(index - 1); // left
-  if (x < 9) neighbors.push(index + 1); // right
+  if (y > 0) neighbours.push(index - 10); // up
+  if (y < 9) neighbours.push(index + 10); // down
+  if (x > 0) neighbours.push(index - 1); // left
+  if (x < 9) neighbours.push(index + 1); // right
 
-  return neighbors;
+  return neighbours;
 };

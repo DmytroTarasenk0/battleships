@@ -2,8 +2,6 @@ import { useState } from "react";
 import { fleet } from "../fleet";
 
 function Shipyard({ placedShips }) {
-  // fleet definition moved to fleet.js
-
   // store state of ships(rotated or not) in {id : boolean} format
   const [rotatedShips, setRotatedShips] = useState({});
 
@@ -28,8 +26,6 @@ function Shipyard({ placedShips }) {
         rotated: currentRotation,
       })
     );
-    // logs
-    console.log(`Dragging ${ship.name} (Rotated: ${currentRotation})`);
   };
 
   return (
@@ -53,7 +49,6 @@ function Shipyard({ placedShips }) {
             onDragStart={(e) => handleDragStart(e, ship)}
             onClick={() => toggleRotation(ship.id)}
           >
-            {/* Check names <div>{ship.name}</div> */}
             {/* Ship parts */}
             {Array.from({ length: ship.length }).map((_, index) => (
               <div key={index} className="ship-part" />

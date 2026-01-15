@@ -1,8 +1,13 @@
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
 import Board from "./components/Board";
 import Shipyard from "./components/Shipyard";
 import GameOver from "./components/GameOver";
-import { generateShips, isOccupied, revealAura, getNeighbors } from "./helpers";
+import {
+  generateShips,
+  isOccupied,
+  revealAura,
+  getNeighbours,
+} from "./helpers";
 
 function App() {
   // player states
@@ -28,7 +33,7 @@ function App() {
         // find target cell
         let target;
 
-        // if have queued NOT-clicked neighbors, pick from them
+        // if have queued NOT-clicked neighbours, pick from them
         const validQueue = Queue.filter((i) => !clickedCells.includes(i));
 
         if (validQueue.length > 0) {
@@ -79,9 +84,9 @@ function App() {
         const hit = isOccupied(placedShips, target);
         if (hit) {
           let nextTargets = validQueue.filter((t) => t !== target); // remove current target from queue
-          const neighbors = getNeighbors(target).filter(
+          const neighbours = getNeighbours(target).filter(
             (n) => !clickedCells.includes(n)
-          ); // get unclicked neighbors
+          ); // get unclicked neighbours
 
           if (shipSunk) {
             // clear queue if ship sunk and go random
@@ -95,15 +100,15 @@ function App() {
             const diff = Math.abs(target - lastHit);
             const isVertical = diff % 10 === 0;
 
-            // filter neighbors based on axis
+            // filter neighbours based on axis
             if (isVertical) {
               const col = target % 10;
-              nextTargets = [...nextTargets, ...neighbors].filter(
+              nextTargets = [...nextTargets, ...neighbours].filter(
                 (t) => t % 10 === col
               );
             } else {
               const row = Math.floor(target / 10);
-              nextTargets = [...nextTargets, ...neighbors].filter(
+              nextTargets = [...nextTargets, ...neighbours].filter(
                 (t) => Math.floor(t / 10) === row
               );
             }
@@ -111,7 +116,7 @@ function App() {
             setQueue(nextTargets);
             setLastHit(target);
           } else {
-            setQueue([...nextTargets, ...neighbors]); // add all neighbors to queue
+            setQueue([...nextTargets, ...neighbours]); // add all neighbours to queue
             setLastHit(target);
           }
         } else {
@@ -203,8 +208,13 @@ function App() {
 
   return (
     <div className="app-container">
-      <h1>Current Turn: {turn === 1 ? "Player" : "Bot"}</h1>
-      <h1>Phase: {gameState}</h1>
+      {gameState === "placement" && (
+        <h1>Place Your Ships and proceed to play</h1>
+      )}
+
+      {gameState === "play" && (
+        <h1>{turn === 1 ? "Your Turn" : "Enemy's Turn"}</h1>
+      )}
 
       <div className="game-area">
         <div className="player-section">
