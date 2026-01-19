@@ -7,12 +7,16 @@ import {
   isOccupied,
   revealAura,
   getNeighbours,
+  playSound,
 } from "./helpers";
 
 function App() {
   // player states
   const [placedShips, setPlacedShips] = useState([]);
   const [clickedCells, setClickedCells] = useState([]);
+
+  const [selectedShipId, setSelectedShipId] = useState(null);
+  const [rotatedShips, setRotatedShips] = useState({});
 
   // bot states
   const [botShips, setBotShips] = useState([]);
@@ -25,6 +29,21 @@ function App() {
   const [gameState, setGameState] = useState("placement"); // "placement" or "play" or "gameover"
   const [turn, setTurn] = useState(() => Math.round(Math.random())); // 1 - player, 0 - bot, first turn random
   const [winner, setWinner] = useState(null); // "player" or "bot"
+
+  // play turn sound effect
+  useEffect(() => {
+    let timer;
+    if (gameState === "play" && turn === 1) {
+      timer = setTimeout(() => {
+        playSound("Yturn");
+      }, 1000);
+    } else if (gameState === "play" && turn === 0) {
+      timer = setTimeout(() => {
+        playSound("Eturn");
+      }, 1000);
+    }
+    return () => clearTimeout(timer);
+  }, [turn, gameState]);
 
   // bot automatic turn
   useEffect(() => {
@@ -83,6 +102,7 @@ function App() {
         // next hit
         const hit = isOccupied(placedShips, target);
         if (hit) {
+          playSound("hit");
           let nextTargets = validQueue.filter((t) => t !== target); // remove current target from queue
           const neighbours = getNeighbours(target).filter(
             (n) => !clickedCells.includes(n)
@@ -121,10 +141,11 @@ function App() {
           }
         } else {
           // miss
+          playSound("miss");
           setQueue(validQueue.filter((i) => i !== target)); // remove target from queue because clicked
           setTurn(1); // switch to player turn
         }
-      }, 1000);
+      }, 1500);
 
       return () => clearTimeout(shoot);
     }
@@ -133,6 +154,8 @@ function App() {
   const resetGame = () => {
     setPlacedShips([]);
     setClickedCells([]);
+    setSelectedShipId(null);
+    setRotatedShips({});
 
     setBotShips([]);
     setBotClickedCells([]);
@@ -185,7 +208,10 @@ function App() {
       checkGameOver(botShips, Array.from(allClicks), "player");
 
       if (!isOccupied(botShips, cellIndex)) {
+        playSound("miss");
         setTurn(0); // switch to bot turn if miss
+      } else {
+        playSound("hit");
       }
     }
   };
@@ -197,6 +223,7 @@ function App() {
       setBotShips(enemies);
 
       setGameState("play");
+      setSelectedShipId(null); // deselect any ship just in case
     }
   };
 
@@ -204,6 +231,7 @@ function App() {
   const handleRandomize = () => {
     const newPlacedShips = generateShips();
     setPlacedShips(newPlacedShips);
+    setSelectedShipId(null);
   };
 
   return (
@@ -227,12 +255,21 @@ function App() {
             onCellClick={() => {}} // no self-clicking
             onRandomize={handleRandomize}
             isEnemy={false} // player board
+            selectedShipId={selectedShipId}
+            setSelectedShipId={setSelectedShipId}
+            rotatedShips={rotatedShips}
           />
         </div>
 
         <div className="enemy-section">
           {gameState === "placement" ? (
-            <Shipyard placedShips={placedShips} />
+            <Shipyard
+              placedShips={placedShips}
+              selectedShipId={selectedShipId}
+              setSelectedShipId={setSelectedShipId}
+              rotatedShips={rotatedShips}
+              setRotatedShips={setRotatedShips}
+            />
           ) : (
             <>
               <h2>Enemy Board</h2>

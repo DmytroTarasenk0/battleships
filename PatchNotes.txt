@@ -46,9 +46,13 @@
 - updated UI to hide development benchmarks
 - reached stable v1.0 (local version)
 
+19.01.2026
+- deployed at https://battleships-livid.vercel.app/
+- rescaled and optimised the UI specifically for landscape mobile screens
+- added sound effects for hits, misses, and turn changes
+- implemented an alternative placement method: tap a ship to select it, then tap the preferred cell to place it
+- ship rotation now requires a double-tap (the first tap selects the ship, the second rotates it)
+- rewrote README.md
 
 plans
-- learn about web-deploy
 - learn about implementation of multiplayer
-- implement touch-screen support (maybe)
-- implement sound-effects (maybe)

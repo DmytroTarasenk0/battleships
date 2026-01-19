@@ -3,7 +3,7 @@
   --ocean-dark: #006994;
   --ocean-medium: #4ca3dd;
   --ocean-light: #e0f0f5;
-  --cell-size: 40px;
+  --cell-size: clamp(1.5rem, 4vh, 2.5rem);
 }
 
 body {
@@ -15,6 +15,7 @@ body {
   background-color: var(--ocean-bg);
   font-family: sans-serif;
   color: var(--ocean-dark);
+  overflow: auto;
 }
 
 /* App-layout */
@@ -24,14 +25,17 @@ body {
   align-items: center;
   min-height: 100vh;
   justify-content: center;
-  padding: 10px;
+  padding: 1rem;
+  box-sizing: border-box;
 }
 
 .game-area {
   display: flex;
-  gap: 30px;
+  gap: 2rem;
   align-items: flex-start;
-  margin-top: 10px;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+  width: 100%;
 }
 
 /* Boards */
@@ -44,27 +48,27 @@ body {
 
 .board-layout {
   display: inline-grid;
-  grid-template-columns: 30px auto;
-  grid-template-rows: 30px auto;
+  grid-template-columns: var(--cell-size) auto;
+  grid-template-rows: var(--cell-size) auto;
 
-  gap: 5px;
-  padding: 15px;
+  gap: 0.3rem;
+  padding: 1rem;
   background-color: var(--ocean-dark);
-  border-radius: 12px;
-  box-shadow: 0 15px 35px rgba(0, 105, 148, 0.3);
+  border-radius: 1rem;
+  box-shadow: 0 1rem 2rem rgba(0, 105, 148, 0.3);
 }
 
 .headers-row {
   display: grid;
   grid-template-columns: repeat(10, var(--cell-size));
-  gap: 4px;
+  gap: 0.25rem;
   grid-column: 2;
 }
 
 .headers-column {
   display: grid;
   grid-template-rows: repeat(10, var(--cell-size));
-  gap: 4px;
+  gap: 0.25rem;
   grid-row: 2;
 }
 
@@ -73,9 +77,9 @@ body {
   grid-template-columns: repeat(10, var(--cell-size));
   grid-template-rows: repeat(10, var(--cell-size));
 
-  gap: 4px;
-  margin-right: 20px;
-  margin-bottom: 20px;
+  gap: 0.25rem;
+  margin-right: 1rem;
+  margin-bottom: 1rem;
 }
 
 .label-cell {
@@ -92,13 +96,16 @@ body {
   width: 100%;
   height: 100%;
   cursor: pointer;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   transition: all 0.2s ease;
 }
 
-.cell:hover {
-  background-color: var(--ocean-medium);
-  transform: scale(1.05);
+/* prevent hover effects on phone */
+@media (hover: hover) {
+  .cell:hover {
+    background-color: var(--ocean-medium);
+    transform: scale(1.05);
+  }
 }
 
 .cell-clicked {
@@ -113,12 +120,12 @@ body {
   display: flex;
   flex-direction: column;
   background-color: rgba(255, 255, 255, 0.5);
-  padding: 20px;
-  border-radius: 12px;
+  padding: 1.5rem;
+  border-radius: 1rem;
   border: 2px dashed var(--ocean-dark);
-  min-width: 200px;
+  min-width: 12rem;
   align-items: flex-start;
-  gap: 20px;
+  gap: 1.5rem;
 }
 
 .shipyard h2 {
@@ -132,16 +139,18 @@ body {
 /* Individual Ship */
 .fleet-ship {
   display: flex;
-  gap: 2px;
-  padding: 5px;
-  border-radius: 4px;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border-radius: 0.5rem;
   cursor: grab;
-  transition: transform 0.2s ease;
+  transition: all 0.2s ease;
   background-color: transparent;
 }
 
-.fleet-ship:hover {
-  background-color: rgba(0, 105, 148, 0.1);
+@media (hover: hover) {
+  .fleet-ship:hover {
+    opacity: 0.9;
+  }
 }
 
 .fleet-ship:active {
@@ -167,69 +176,86 @@ body {
   border: 2px solid white;
 }
 
-/* Reset Button */
-.reset-btn {
-  margin-top: 15px;
-  padding: 12px 48px;
-  background-color: #e74c3c;
-  color: white;
-  border: none;
-  border-radius: 20px;
-  cursor: pointer;
-  font-weight: bold;
-  display: flex;
-  justify-content: center;
-  transition: background-color 0.3s ease;
+.ship-selected {
+  background-color: #1d2bac;
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.reset-btn:hover {
-  background-color: #a7372b;
+/* All Buttons */
+.reset-btn,
+.random-btn,
+.start-btn,
+.new-game-btn {
+  padding: 0.8rem 2rem;
+  color: white;
+  border: none;
+  border-radius: 2rem;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.1s ease, background-color 0.2s ease;
+  margin-top: 1rem;
+}
+
+.reset-btn:active,
+.random-btn:active,
+.start-btn:active,
+.new-game-btn:active {
+  transform: scale(0.95);
+}
+
+/* Reset Button */
+.reset-btn {
+  background-color: #e74c3c;
+}
+
+@media (hover: hover) {
+  .reset-btn:hover {
+    background-color: #a7372b;
+  }
 }
 
 /* Start Button */
 .start-btn {
-  margin-top: 20px;
-  padding: 15px 40px;
   background-color: #2ecc71;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 1.2rem;
-  font-weight: bold;
-  cursor: pointer;
   width: 100%;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  font-size: 1.2rem;
 }
 
-.start-btn:hover {
-  background-color: #067735;
+@media (hover: hover) {
+  .start-btn:hover {
+    background-color: #067735;
+  }
 }
 
 /* Randomize Button */
 .random-btn {
-  margin-top: 15px;
-  padding: 12px 48px;
   background-color: #b339e4;
-  color: white;
-  border: none;
-  border-radius: 20px;
-  cursor: pointer;
-  font-weight: bold;
-  display: flex;
-  justify-content: center;
-  transition: background-color 0.3s ease;
 }
 
-.random-btn:hover {
-  background-color: #7c1aa3;
+@media (hover: hover) {
+  .random-btn:hover {
+    background-color: #7c1aa3;
+  }
+}
+
+/* New Game Button */
+.new-game-btn {
+  margin: 1.5rem auto 0 auto;
+  background-color: #42db34;
 }
 
 /* Game Over Overlay */
 .game-over-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   background-color: rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
@@ -240,9 +266,10 @@ body {
 
 .game-over-modal {
   background-color: white;
-  padding: 40px;
-  border-radius: 12px;
+  padding: 2rem;
+  border-radius: 1rem;
   text-align: center;
+  max-width: 75%;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
   border: 4px solid var(--ocean-dark);
 }
@@ -253,16 +280,34 @@ body {
   color: var(--ocean-dark);
 }
 
-.new-game-btn {
-  margin: 20px auto 0 auto;
-  padding: 12px 48px;
-  background-color: #42db34;
-  color: white;
-  border: none;
-  border-radius: 20px;
-  cursor: pointer;
-  font-weight: bold;
-  display: flex;
-  justify-content: center;
-  transition: background-color 0.3s ease;
+/* ====== 
+  Mobile Styles
+  ====== */
+@media (max-width: 768px) {
+  .app-container {
+    justify-content: flex-start;
+    padding-top: 2rem;
+    height: auto;
+    min-height: 100%;
+  }
+
+  .game-area {
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    padding-bottom: 4rem;
+  }
+
+  .shipyard {
+    width: 80%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .fleet-ship {
+    transform: scale(0.8);
+  }
 }

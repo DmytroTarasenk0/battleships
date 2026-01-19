@@ -120,3 +120,32 @@ export const getNeighbours = (index) => {
 
   return neighbours;
 };
+
+// play sound effects
+export const playSound = (type) => {
+  let file = "";
+  let volume = 1.0;
+
+  switch (type) {
+    case "hit":
+      file = "/sounds/hit.mp3";
+      volume = 0.7;
+      break;
+    case "miss":
+      file = "/sounds/miss.mp3";
+      volume = 0.5;
+      break;
+    case "Yturn":
+      file = "/sounds/Your-turn.mp3";
+      break;
+    case "Eturn":
+      file = "/sounds/Enemy-turn.mp3";
+      break;
+    default:
+      return;
+  }
+
+  const audio = new Audio(file);
+  audio.volume = volume;
+  audio.play().catch((e) => console.log("Audio play failed", e));
+};

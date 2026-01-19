@@ -5,9 +5,15 @@ A fully functional Battleship game built with **React**. Features a smart AI opp
 ## Features
 
 - **Smart AI:** The bot uses an algorithm with axis-locking to sink ships efficiently.
-- **Drag & Drop:** Intuitive ship placement using native HTML5 drag-and-drop.
+- **Hybrid Controls:** Supports both traditional **Drag & Drop** (PC) and **Tap-to-Place** (Mobile & PC).
 - **Fog of War:** Enemy ships are hidden until hit; sunken ships reveal their surrounding "aura"(1-line border).
 - **Game Loop:** Complete flow from placement => turn-based combat => game over screen.
+- **Responsive Design:** Optimized layout for desktop and landscape mobile play.
+- **Interactive Audio:** Immersive sound effects for hits, misses, and turn switches.
+
+## Live Demo
+
+Play the game here: https://battleships-livid.vercel.app/
 
 ## Tech Stack
 
@@ -37,8 +43,12 @@ A fully functional Battleship game built with **React**. Features a smart AI opp
 
 ## How to Play
 
-1.  **Placement Phase:** Drag your ships (Carrier, Battleship, etc.) onto the board.
-2.  **Rotation:** Click a ship in the shipyard to toggle its rotation (Vertical/Horizontal) before dragging if needed.
+1.  **Placement Phase:**
+    - **Drag & Drop(PC ONLY):** Drag ships from the shipyard onto the board.
+    - **Tap-to-Place:** Tap a ship to select it, then tap a cell on the board to place it.
+2.  **Rotation:**
+    - Tap a ship **once** to select it.
+    - Tap **again** to toggle rotation (Vertical/Horizontal).
 3.  **Battle Phase:** Click on the "Enemy Board" to fire.
     - **Red:** Hit and you get another turn.
     - **Blue:** Miss. Turn passes to the bot.
@@ -46,6 +56,6 @@ A fully functional Battleship game built with **React**. Features a smart AI opp
 
 ## Future Plans
 
-- [ ] Mobile/Touch-screen support
+- [x] Mobile/Touch-screen support
+- [x] Sound Effects
 - [ ] Multiplayer
-- [ ] Sound Effects
