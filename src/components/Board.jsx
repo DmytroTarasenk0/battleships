@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { calculateCoords, checkCollision, isOccupied } from "../helpers";
 import { fleet } from "../fleet";
 
@@ -9,12 +10,16 @@ function Board({
   onCellClick,
   onRandomize,
   isEnemy, // true or false
+  revealAll = false, // for game overview after match ends
   selectedShipId,
   setSelectedShipId,
   rotatedShips,
 }) {
   // cells and their states
   const cells = Array.from({ length: 100 }, (_, i) => i);
+
+  // timestamp of the last tap
+  const lastTapRef = useRef(0);
 
   // column and row labels
   const colLabels = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
@@ -79,6 +84,43 @@ function Board({
     if (setSelectedShipId) setSelectedShipId(null);
   };
 
+  // dismount ship by double click handler
+  const handleDoubleClick = (index) => {
+    // only allow during placement on player board
+    if (gameState !== "placement" || isEnemy) return;
+
+    // if a ship exists at this exact cell index
+    const shipToRemove = placedShips.find((ship) =>
+      ship.coords.includes(index),
+    );
+
+    if (shipToRemove) {
+      // filter out the ship to remove
+      setPlacedShips((prev) => prev.filter((s) => s.id !== shipToRemove.id));
+
+      // auto-select the removed ship for repositioning
+      if (setSelectedShipId) {
+        setSelectedShipId(shipToRemove.id);
+      }
+    }
+  };
+
+  // universal click handler to differentiate single vs double clicks (mobile support)
+  const handleUniversalClick = (index) => {
+    const now = Date.now();
+    const DOUBLE_TAP_DELAY = 300; // ms
+
+    // if the time between taps is less than the delay, treat as double click
+    if (now - lastTapRef.current < DOUBLE_TAP_DELAY) {
+      handleDoubleClick(index);
+    } else {
+      handleBoardClick(index);
+    }
+
+    // update last tap timestamp
+    lastTapRef.current = now;
+  };
+
   return (
     <div>
       <div className="board-layout">
@@ -111,7 +153,7 @@ function Board({
             // clicked & occupied => occupied by player => clicked => default
             if (Occupied && isClicked) {
               statusClass = "ship-present ship-hitted";
-            } else if (Occupied && !isEnemy) {
+            } else if (Occupied && (!isEnemy || revealAll)) {
               statusClass = "ship-present";
             } else if (isClicked) {
               statusClass = "cell-clicked";
@@ -120,7 +162,7 @@ function Board({
               <div
                 key={i}
                 className={`cell ${statusClass}`}
-                onClick={() => handleBoardClick(i)}
+                onClick={() => handleUniversalClick(i)}
                 onDragOver={handleDragOver}
                 onDrop={(e) => handleDrop(e, i)}
               />

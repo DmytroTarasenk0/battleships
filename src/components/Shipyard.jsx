@@ -34,7 +34,7 @@ function Shipyard({
         id: ship.id,
         length: ship.length,
         rotated: currentRotation,
-      })
+      }),
     );
   };
 
@@ -76,7 +76,8 @@ function Shipyard({
           Drag and drop ships onto the board. <br />
           Or, tap a ship to select it, then tap the board to place it. <br />
           Note: You place the ship by its "nose" (top/left) <br />
-          Tap a ship again to rotate it.
+          Tap a ship again to rotate it. <br />
+          To reposition a placed ship, tap its cell twice
         </p>
       </div>
     </div>

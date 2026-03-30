@@ -54,5 +54,9 @@
 - ship rotation now requires a double-tap (the first tap selects the ship, the second rotates it)
 - rewrote README.md
 
+30.03.2026
+- implemented a new post-game screen allowing players to view the opponent's unrevealed ships after a match concludes
+- added a QoL improvement enabling players to easily dismount and reposition ships during the setup phase via a double-click or double-tap
+
 plans
 - learn about implementation of multiplayer

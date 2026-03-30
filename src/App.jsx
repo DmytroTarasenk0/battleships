@@ -26,7 +26,7 @@ function App() {
   const [lastHit, setLastHit] = useState(null); // track last hit position
 
   // game states
-  const [gameState, setGameState] = useState("placement"); // "placement" or "play" or "gameover"
+  const [gameState, setGameState] = useState("placement"); // "placement" or "play" or "gameover" or "overview"
   const [turn, setTurn] = useState(() => Math.round(Math.random())); // 1 - player, 0 - bot, first turn random
   const [winner, setWinner] = useState(null); // "player" or "bot"
 
@@ -73,7 +73,7 @@ function App() {
 
         placedShips.forEach((ship) => {
           const isSunk = ship.coords.every((coord) =>
-            newClicks.includes(coord)
+            newClicks.includes(coord),
           );
 
           // push aura coords if sunk
@@ -95,7 +95,7 @@ function App() {
         const isGameOver = checkGameOver(
           placedShips,
           Array.from(allClicks),
-          "bot"
+          "bot",
         );
         if (isGameOver) return;
 
@@ -105,7 +105,7 @@ function App() {
           playSound("hit");
           let nextTargets = validQueue.filter((t) => t !== target); // remove current target from queue
           const neighbours = getNeighbours(target).filter(
-            (n) => !clickedCells.includes(n)
+            (n) => !clickedCells.includes(n),
           ); // get unclicked neighbours
 
           if (shipSunk) {
@@ -124,12 +124,12 @@ function App() {
             if (isVertical) {
               const col = target % 10;
               nextTargets = [...nextTargets, ...neighbours].filter(
-                (t) => t % 10 === col
+                (t) => t % 10 === col,
               );
             } else {
               const row = Math.floor(target / 10);
               nextTargets = [...nextTargets, ...neighbours].filter(
-                (t) => Math.floor(t / 10) === row
+                (t) => Math.floor(t / 10) === row,
               );
             }
 
@@ -170,7 +170,7 @@ function App() {
   // check if all ships are sunk => game over and set winner
   const checkGameOver = (enemyShips, hits, fleetOwner) => {
     const isAllSunk = enemyShips.every((ship) =>
-      ship.coords.every((coord) => hits.includes(coord))
+      ship.coords.every((coord) => hits.includes(coord)),
     );
 
     if (isAllSunk) {
@@ -234,6 +234,11 @@ function App() {
     setSelectedShipId(null);
   };
 
+  // overview button handler
+  const handleOverview = () => {
+    setGameState("overview");
+  };
+
   return (
     <div className="app-container">
       {gameState === "placement" && (
@@ -243,6 +248,8 @@ function App() {
       {gameState === "play" && (
         <h1>{turn === 1 ? "Your Turn" : "Enemy's Turn"}</h1>
       )}
+
+      {gameState === "overview" && <h1>Post-Game Overview</h1>}
 
       <div className="game-area">
         <div className="player-section">
@@ -255,6 +262,7 @@ function App() {
             onCellClick={() => {}} // no self-clicking
             onRandomize={handleRandomize}
             isEnemy={false} // player board
+            revealAll={gameState === "overview"} // reveal all ships in overview
             selectedShipId={selectedShipId}
             setSelectedShipId={setSelectedShipId}
             rotatedShips={rotatedShips}
@@ -279,10 +287,18 @@ function App() {
                 clickedCells={botClickedCells}
                 onCellClick={handleEnemyClick}
                 isEnemy={true} // enemy board
+                revealAll={gameState === "overview"} // reveal all ships in overview
               />
-              <button className="reset-btn" onClick={resetGame}>
-                Reset Game
-              </button>
+
+              {gameState === "overview" ? (
+                <button className="new-game-btn" onClick={resetGame}>
+                  Play Again
+                </button>
+              ) : (
+                <button className="reset-btn" onClick={resetGame}>
+                  Reset Game
+                </button>
+              )}
             </>
           )}
         </div>
@@ -302,7 +318,11 @@ function App() {
       )}
 
       {gameState === "gameOver" && (
-        <GameOver winner={winner} onReset={resetGame} />
+        <GameOver
+          winner={winner}
+          onReset={resetGame}
+          onOverview={handleOverview}
+        />
       )}
     </div>
   );

@@ -80,6 +80,8 @@ body {
   gap: 0.25rem;
   margin-right: 1rem;
   margin-bottom: 1rem;
+
+  touch-action: manipulation;
 }
 
 .label-cell {
@@ -198,7 +200,9 @@ body {
   justify-content: center;
   align-items: center;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.1s ease, background-color 0.2s ease;
+  transition:
+    transform 0.1s ease,
+    background-color 0.2s ease;
   margin-top: 1rem;
 }
 
